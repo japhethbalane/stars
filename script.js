@@ -46,7 +46,7 @@ function Star() {
 	this.g = randomBetween(50,255);
 	this.b = randomBetween(255,255);
 
-	this.auraRadius = 35;
+	this.auraRadius = 25 * this.radius;
 
 	this.update = function() {
 		this.x -= this.speed;
@@ -55,10 +55,10 @@ function Star() {
 			this.x = canvas.width;
 		};
 
-		if (!this.bool) {
+		if (!this.bool && randomBetween(1,3) == 1) {
 			this.radius -= 0.05;
 		};
-		if (this.bool) {
+		if (this.bool && randomBetween(1,3) == 1) {
 			this.radius += 0.05;
 		};
 
@@ -84,7 +84,7 @@ function Star() {
 
 		context.beginPath();
 		context.arc(this.x, this.y, this.auraRadius, Math.PI * 2, false);
-		context.fillStyle = "rgba("+this.r+","+this.g+","+this.b+",0.02)";
+		context.fillStyle = "rgba("+this.r+","+this.g+","+this.b+",0.01)";
 		context.fill();
 
 		return this;
