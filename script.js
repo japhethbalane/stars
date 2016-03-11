@@ -47,7 +47,7 @@ function Star() {
 	this.b = randomBetween(255,255);
 
 	this.update = function() {
-		// this.x -= this.speed;
+		this.x -= this.speed;
 
 		if (this.x < 0) {
 			this.x = canvas.width;
