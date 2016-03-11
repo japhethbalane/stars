@@ -46,6 +46,8 @@ function Star() {
 	this.g = randomBetween(50,255);
 	this.b = randomBetween(255,255);
 
+	this.auraRadius = 35;
+
 	this.update = function() {
 		this.x -= this.speed;
 
@@ -78,6 +80,11 @@ function Star() {
 		context.beginPath();
 		context.arc(this.x, this.y, this.radius, Math.PI * 2, false);
 		context.fillStyle = "rgba("+this.r+","+this.g+","+this.b+",1)";
+		context.fill();
+
+		context.beginPath();
+		context.arc(this.x, this.y, this.auraRadius, Math.PI * 2, false);
+		context.fillStyle = "rgba("+this.r+","+this.g+","+this.b+",0.02)";
 		context.fill();
 
 		return this;
