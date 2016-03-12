@@ -22,6 +22,7 @@ function universe() {
 	for (var i = 0; i < stars.length; i++) {
 		stars[i].update().draw();
 	}
+	draw();
 }
 
 function randomBetween(min, max) {
@@ -50,15 +51,24 @@ function Star() {
 
 	this.update = function() {
 		this.x -= this.speed;
+		this.y += this.speed / 2;
 
 		if (this.x < 0) {
 			this.x = canvas.width;
 		};
+		if (this.x > canvas.width) {
+			this.x = 0;
+		}
+		if (this.y < 0) {
+			this.y = canvas.height;
+		}
+		if (this.y > canvas.height) {
+			this.y = 0;
+		}
 
 		if (!this.bool && randomBetween(1,3) == 1) {
 			this.radius -= 0.05;
-		};
-		if (this.bool && randomBetween(1,3) == 1) {
+		} else if (this.bool && randomBetween(1,3) == 1) {
 			this.radius += 0.05;
 		};
 
