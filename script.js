@@ -41,7 +41,7 @@ function Star() {
 
 	this.test = this.radius;
 	this.bool = false;
-	this.speed = randomBetween(5, 10) * 0.1;
+	this.speed = randomBetween(5, 10) * 0.05;
 
 	this.r = randomBetween(50,255);
 	this.g = randomBetween(50,255);
@@ -51,7 +51,7 @@ function Star() {
 
 	this.update = function() {
 		this.x -= this.speed;
-		this.y += this.speed / 2;
+		this.y -= this.speed / 4;
 
 		if (this.x < 0) {
 			this.x = canvas.width;
