@@ -5,6 +5,7 @@ canvas.width = window.innerWidth;
 canvas.height = window.innerHeight;
 
 var stars = [];
+var horizon = new Horizon();
 var starCount = 500;
 
 setInterval(universe, 20);
@@ -22,7 +23,7 @@ function universe() {
 	for (var i = 0; i < stars.length; i++) {
 		stars[i].update().draw();
 	}
-	draw();
+	horizon.draw();
 }
 
 function randomBetween(min, max) {
@@ -36,7 +37,18 @@ function clearCanvas() {
 
 function Star() {
 	this.x = randomBetween(0, canvas.width);
-	this.y = randomBetween(0, canvas.height);
+	this.y = canvas.height / horizon.div;
+	var check = false;
+	for (var i = canvas.height / horizon.div; i > 0 && !check; i--) {
+		if (randomBetween(1,300) == 1) {
+			this.y = i;
+			check = !check;
+		}
+	}
+	if (this.y == canvas.height / horizon.div) {
+		this.y = randomBetween(0, canvas.height / horizon.div)
+	}
+
 	this.radius = randomBetween(1, 3);
 
 	this.test = this.radius;
@@ -49,10 +61,8 @@ function Star() {
 
 	this.auraRadius = 25 * this.radius;
 
-	this.update = function() {
-		this.x -= this.speed;
-		this.y -= this.speed / 4;
 
+	this.control = function() {
 		if (this.x < 0) {
 			this.x = canvas.width;
 		};
@@ -65,6 +75,27 @@ function Star() {
 		if (this.y > canvas.height) {
 			this.y = 0;
 		}
+	}
+
+	this.drawCounterpart = function() {
+		var test = (canvas.height/horizon.div) - this.y + horizon.y;
+		if (test < canvas.height) {
+			context.beginPath();
+			context.arc(this.x, test, this.radius, Math.PI * 2, false);
+			context.fillStyle = "rgba("+this.r+","+this.g+","+this.b+",0.5)";
+			context.fill();
+
+			context.beginPath();
+			context.arc(this.x,test, this.auraRadius, Math.PI * 2, false);
+			context.fillStyle = "rgba("+this.r+","+this.g+","+this.b+",0.005)";
+			context.fill();
+		}
+	}
+
+	this.update = function() {
+		this.x -= this.speed;
+
+		this.control();
 
 		if (!this.bool && randomBetween(1,3) == 1) {
 			this.radius -= 0.05;
@@ -97,6 +128,21 @@ function Star() {
 		context.fillStyle = "rgba("+this.r+","+this.g+","+this.b+",0.01)";
 		context.fill();
 
+		this.drawCounterpart();
+
 		return this;
+	}
+}
+
+function Horizon() {
+	this.div = 1.3;
+	this.y = canvas.height / this.div;
+
+	this.draw = function() {
+		context.beginPath();
+		context.moveTo(0,this.y);
+		context.lineTo(canvas.width,this.y);
+		context.strokeStyle = "rgba(255,255,255,0.05)";
+		context.stroke();
 	}
 }
