@@ -24,6 +24,7 @@ function universe() {
 		stars[i].update().draw();
 	}
 	horizon.draw();
+	// drawArea();
 }
 
 function randomBetween(min, max) {
@@ -35,19 +36,25 @@ function clearCanvas() {
 	context.fillRect(0,0,canvas.width,canvas.height);
 }
 
+function drawArea(){
+	context.fillStyle = "rgba(100,255,200,0.03)";
+	context.fillRect(0,horizon.y,canvas.width,canvas.height-horizon.y);
+}
+
 function Star() {
 	this.x = randomBetween(0, canvas.width);
-	this.y = canvas.height / horizon.div;
-	var check = false;
-	for (var i = canvas.height / horizon.div; i > 0 && !check; i--) {
-		if (randomBetween(1,300) == 1) {
-			this.y = i;
-			check = !check;
-		}
-	}
-	if (this.y == canvas.height / horizon.div) {
-		this.y = randomBetween(0, canvas.height / horizon.div)
-	}
+	this.y = randomBetween(0, canvas.height / horizon.div)
+	// this.y = canvas.height / horizon.div;
+	// var check = false;
+	// for (var i = canvas.height / horizon.div; i > 0 && !check; i--) {
+	// 	if (randomBetween(1,300) == 1) {
+	// 		this.y = i;
+	// 		check = !check;
+	// 	}
+	// }
+	// if (this.y == canvas.height / horizon.div) {
+	// 	this.y = randomBetween(0, canvas.height / horizon.div)
+	// }
 
 	this.radius = randomBetween(1, 3);
 
@@ -72,7 +79,7 @@ function Star() {
 		if (this.y < 0) {
 			this.y = canvas.height;
 		}
-		if (this.y > canvas.height) {
+		if (this.y > canvas.height - (canvas.height - horizon.y)) {
 			this.y = 0;
 		}
 	}
@@ -94,6 +101,7 @@ function Star() {
 
 	this.update = function() {
 		this.x -= this.speed;
+		this.y += this.speed / 4;
 
 		this.control();
 
@@ -123,10 +131,10 @@ function Star() {
 		context.fillStyle = "rgba("+this.r+","+this.g+","+this.b+",1)";
 		context.fill();
 
-		context.beginPath();
-		context.arc(this.x, this.y, this.auraRadius, Math.PI * 2, false);
-		context.fillStyle = "rgba("+this.r+","+this.g+","+this.b+",0.01)";
-		context.fill();
+		// context.beginPath();
+		// context.arc(this.x, this.y, this.auraRadius, Math.PI * 2, false);
+		// context.fillStyle = "rgba("+this.r+","+this.g+","+this.b+",0.01)";
+		// context.fill();
 
 		this.drawCounterpart();
 
