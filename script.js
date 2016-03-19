@@ -84,6 +84,16 @@ function Star() {
 		}
 	}
 
+	this.drawAura = function() {
+		if (this.auraRadius + this.y > horizon.y) {
+			this.y = horizon.y - this.y;
+			context.beginPath();
+			context.arc(this.x, this.y, this.auraRadius, Math.PI * 2, false);
+			context.fillStyle = "rgba("+this.r+","+this.g+","+this.b+",0.01)";
+			context.fill();
+		}
+	}
+
 	this.drawCounterpart = function() {
 		var test = (canvas.height/horizon.div) - this.y + horizon.y;
 		if (test < canvas.height) {
@@ -126,17 +136,13 @@ function Star() {
 	}
 
 	this.draw = function() {
+		this.drawAura();
+		this.drawCounterpart();
+
 		context.beginPath();
 		context.arc(this.x, this.y, this.radius, Math.PI * 2, false);
 		context.fillStyle = "rgba("+this.r+","+this.g+","+this.b+",1)";
 		context.fill();
-
-		// context.beginPath();
-		// context.arc(this.x, this.y, this.auraRadius, Math.PI * 2, false);
-		// context.fillStyle = "rgba("+this.r+","+this.g+","+this.b+",0.01)";
-		// context.fill();
-
-		this.drawCounterpart();
 
 		return this;
 	}
