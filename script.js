@@ -6,7 +6,7 @@ canvas.height = window.innerHeight;
 
 var stars = [];
 var horizon = new Horizon();
-var starCount = 500;
+var starCount = 300;
 
 setInterval(universe, 20);
 
@@ -86,12 +86,12 @@ function Star() {
 
 	this.drawAura = function() {
 		if (this.auraRadius + this.y > horizon.y) {
-			this.y = horizon.y - this.y;
-			context.beginPath();
-			context.arc(this.x, this.y, this.auraRadius, Math.PI * 2, false);
-			context.fillStyle = "rgba("+this.r+","+this.g+","+this.b+",0.01)";
-			context.fill();
+			this.auraRadius = horizon.y - this.y;
 		}
+		context.beginPath();
+		context.arc(this.x, this.y, this.auraRadius, Math.PI * 2, false);
+		context.fillStyle = "rgba("+this.r+","+this.g+","+this.b+",0.015)";
+		context.fill();
 	}
 
 	this.drawCounterpart = function() {
@@ -99,12 +99,12 @@ function Star() {
 		if (test < canvas.height) {
 			context.beginPath();
 			context.arc(this.x, test, this.radius, Math.PI * 2, false);
-			context.fillStyle = "rgba("+this.r+","+this.g+","+this.b+",0.5)";
+			context.fillStyle = "rgba("+this.r+","+this.g+","+this.b+",0.3)";
 			context.fill();
 
 			context.beginPath();
 			context.arc(this.x,test, this.auraRadius, Math.PI * 2, false);
-			context.fillStyle = "rgba("+this.r+","+this.g+","+this.b+",0.005)";
+			context.fillStyle = "rgba("+this.r+","+this.g+","+this.b+",0.01)";
 			context.fill();
 		}
 	}
@@ -120,14 +120,12 @@ function Star() {
 		} else if (this.bool && randomBetween(1,3) == 1) {
 			this.radius += 0.05;
 		};
-
 		if (this.radius <= 0.4) {
 			this.bool = true;
 		};
 		if (this.radius >= this.test) {
 			this.bool = false;
 		};
-
 		if (this.radius < 0) {
 			this.radius = 0;
 		};
@@ -149,14 +147,14 @@ function Star() {
 }
 
 function Horizon() {
-	this.div = 1.3;
+	this.div = 1.5;
 	this.y = canvas.height / this.div;
 
 	this.draw = function() {
 		context.beginPath();
 		context.moveTo(0,this.y);
 		context.lineTo(canvas.width,this.y);
-		context.strokeStyle = "rgba(255,255,255,0.05)";
+		context.strokeStyle = "rgba(255,255,255,0.1)";
 		context.stroke();
 	}
 }
