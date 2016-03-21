@@ -154,7 +154,7 @@ function Horizon() {
 		context.beginPath();
 		context.moveTo(0,this.y);
 		context.lineTo(canvas.width,this.y);
-		context.strokeStyle = "rgba(255,255,255,0.1)";
+		context.strokeStyle = "rgba(255,255,255,0.07)";
 		context.stroke();
 	}
 }
