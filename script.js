@@ -44,17 +44,6 @@ function drawArea(){
 function Star() {
 	this.x = randomBetween(0, canvas.width);
 	this.y = randomBetween(0, canvas.height / horizon.div)
-	// this.y = canvas.height / horizon.div;
-	// var check = false;
-	// for (var i = canvas.height / horizon.div; i > 0 && !check; i--) {
-	// 	if (randomBetween(1,300) == 1) {
-	// 		this.y = i;
-	// 		check = !check;
-	// 	}
-	// }
-	// if (this.y == canvas.height / horizon.div) {
-	// 	this.y = randomBetween(0, canvas.height / horizon.div)
-	// }
 
 	this.radius = randomBetween(1, 3);
 
@@ -66,31 +55,53 @@ function Star() {
 	this.g = randomBetween(50,255);
 	this.b = randomBetween(255,255);
 
-	this.auraRadius = 25 * this.radius;
-
+	this.radMlt = 50;
+	this.auraRadius = this.radMlt * this.radius;
+	this.originalAuraRadius = this.auraRadius;
 
 	this.control = function() {
 		if (this.x < 0) {
 			this.x = canvas.width;
+			this.auraRadius = this.radMlt * this.radius;
 		};
 		if (this.x > canvas.width) {
 			this.x = 0;
+			this.auraRadius = this.radMlt * this.radius;
 		}
 		if (this.y < 0) {
-			this.y = canvas.height;
+			this.y = canvas.height - (canvas.height - horizon.y);
+			this.auraRadius = this.radMlt * this.radius;
 		}
 		if (this.y > canvas.height - (canvas.height - horizon.y)) {
 			this.y = 0;
+			this.auraRadius = this.radMlt * this.radius;
 		}
 	}
 
-	this.drawAura = function() {
-		if (this.auraRadius + this.y > horizon.y) {
+	this.checkAuraPosition = function() {
+		if (this.auraRadius < this.originalAuraRadius) {
+			this.auraRadius = this.originalAuraRadius;
+		}
+
+		if (this.y + this.auraRadius > horizon.y) {
 			this.auraRadius = horizon.y - this.y;
 		}
+		if (this.y - this.auraRadius < 0) {
+			this.auraRadius = this.y;
+		}
+		if (this.x + this.auraRadius > canvas.width) {
+			this.auraRadius = canvas.width - this.x;
+		}
+		if (this.x - this.auraRadius < 0) {
+			this.auraRadius = this.x;
+		}		
+	}
+
+	this.drawAura = function() {
+		this.checkAuraPosition();
 		context.beginPath();
 		context.arc(this.x, this.y, this.auraRadius, Math.PI * 2, false);
-		context.fillStyle = "rgba("+this.r+","+this.g+","+this.b+",0.015)";
+		context.fillStyle = "rgba("+this.r+","+this.g+","+this.b+",0.007)";
 		context.fill();
 	}
 
@@ -104,13 +115,13 @@ function Star() {
 
 			context.beginPath();
 			context.arc(this.x,test, this.auraRadius, Math.PI * 2, false);
-			context.fillStyle = "rgba("+this.r+","+this.g+","+this.b+",0.01)";
+			context.fillStyle = "rgba("+this.r+","+this.g+","+this.b+",0.004)";
 			context.fill();
 		}
 	}
 
 	this.update = function() {
-		this.x -= this.speed;
+		this.x += this.speed;
 		this.y += this.speed / 4;
 
 		this.control();
