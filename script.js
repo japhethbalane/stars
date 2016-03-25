@@ -3,7 +3,6 @@ var context = canvas.getContext("2d");
 
 canvas.width = window.innerWidth;
 canvas.height = window.innerHeight;
-
 var stars = [];
 var horizon = new Horizon();
 var starCount = 300;
@@ -24,7 +23,6 @@ function universe() {
 		stars[i].update().draw();
 	}
 	horizon.draw();
-	// drawArea();
 }
 
 function randomBetween(min, max) {
@@ -34,11 +32,6 @@ function randomBetween(min, max) {
 function clearCanvas() {
 	context.fillStyle = "#000";
 	context.fillRect(0,0,canvas.width,canvas.height);
-}
-
-function drawArea(){
-	context.fillStyle = "rgba(100,255,200,0.03)";
-	context.fillRect(0,horizon.y,canvas.width,canvas.height-horizon.y);
 }
 
 function Star() {
@@ -121,7 +114,7 @@ function Star() {
 	}
 
 	this.update = function() {
-		this.x += this.speed;
+		this.x -= this.speed;
 		this.y += this.speed / 4;
 
 		this.control();
