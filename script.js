@@ -115,7 +115,7 @@ function Star() {
 
 	this.update = function() {
 		this.x -= this.speed;
-		this.y += this.speed / 4;
+		this.y -= this.speed / 4;
 
 		this.control();
 
