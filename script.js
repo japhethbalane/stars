@@ -1,21 +1,28 @@
+
+//////////////////////////////////////////////////////////////////////////////////////
+
 var canvas = document.getElementById("stars");
 var context = canvas.getContext("2d");
-
-canvas.width = window.innerWidth;
-canvas.height = window.innerHeight;
 var stars = [];
 var horizon = new Horizon();
 var starCount = 300;
 
-setInterval(universe, 20);
+//////////////////////////////////////////////////////////////////////////////////////
 
+setInterval(universe, 20);
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
 generateStars(starCount);
+
+//////////////////////////////////////////////////////////////////////////////////////
 
 function generateStars(count) {
 	for (var i = 0; i < count; i++) {
 		stars.push(new Star());
 	}
 }
+
+//////////////////////////////////////////////////////////////////////////////////////
 
 function universe() {
 	clearCanvas();
@@ -25,6 +32,8 @@ function universe() {
 	horizon.draw();
 }
 
+//////////////////////////////////////////////////////////////////////////////////////
+
 function randomBetween(min, max) {
     return Math.floor(Math.random() * (max - min)) + min;
 }
@@ -33,6 +42,8 @@ function clearCanvas() {
 	context.fillStyle = "#000";
 	context.fillRect(0,0,canvas.width,canvas.height);
 }
+
+//////////////////////////////////////////////////////////////////////////////////////
 
 function Star() {
 	this.x = randomBetween(0, canvas.width);
@@ -98,21 +109,6 @@ function Star() {
 		context.fill();
 	}
 
-	this.drawCounterpart = function() {
-		var test = (canvas.height/horizon.div) - this.y + horizon.y;
-		if (test < canvas.height) {
-			context.beginPath();
-			context.arc(this.x, test, this.radius, Math.PI * 2, false);
-			context.fillStyle = "rgba("+this.r+","+this.g+","+this.b+",0.3)";
-			context.fill();
-
-			context.beginPath();
-			context.arc(this.x,test, this.auraRadius, Math.PI * 2, false);
-			context.fillStyle = "rgba("+this.r+","+this.g+","+this.b+",0.004)";
-			context.fill();
-		}
-	}
-
 	this.update = function() {
 		this.x -= this.speed;
 		this.y -= this.speed / 4;
@@ -135,6 +131,21 @@ function Star() {
 		};
 
 		return this;
+	}
+
+	this.drawCounterpart = function() {
+		var test = (canvas.height/horizon.div) - this.y + horizon.y;
+		if (test < canvas.height) {
+			context.beginPath();
+			context.arc(this.x, test, this.radius, Math.PI * 2, false);
+			context.fillStyle = "rgba("+this.r+","+this.g+","+this.b+",0.3)";
+			context.fill();
+
+			context.beginPath();
+			context.arc(this.x,test, this.auraRadius, Math.PI * 2, false);
+			context.fillStyle = "rgba("+this.r+","+this.g+","+this.b+",0.004)";
+			context.fill();
+		}
 	}
 
 	this.draw = function() {
