@@ -9,6 +9,7 @@ canvas.height = window.innerHeight;
 ////////////////////////////////////////////////////////////////
 
 var stars = [];
+var steadystars = [];
 var starCount = 400;
 var horizon = new Horizon();
 
@@ -22,12 +23,18 @@ function generateStars(count) {
 	for (var i = 0; i < count; i++) {
 		stars.push(new Star());
 	}
+	for (var i = 0; i < count/2; i++) {
+		steadystars.push(new steadyStar());
+	}
 }
 
 ////////////////////////////////////////////////////////////////
 
 function universe() {
 	clearCanvas();
+	for (var i = 0; i < steadystars.length; i++) {
+		steadystars[i].draw();
+	}
 	for (var i = 0; i < stars.length; i++) {
 		stars[i].update().draw();
 	}
@@ -160,6 +167,28 @@ function Star() {
 		context.fill();
 
 		return this;
+	}
+}
+
+function steadyStar() {
+	this.x = randomBetween(0, canvas.width);
+	this.y = randomBetween(0, horizon.y);
+	this.radius = 0.5;
+	this.r = randomBetween(50,255);
+	this.g = randomBetween(50,255);
+	this.b = randomBetween(255,255);
+
+	this.drawCounterpart = function() {
+
+	}
+
+	this.draw = function() {
+		this.drawCounterpart();
+
+		context.beginPath();
+		context.arc(this.x, this.y, this.radius, Math.PI * 2, false);
+		context.fillStyle = "rgba("+this.r+","+this.g+","+this.b+",1)";
+		context.fill();
 	}
 }
 
