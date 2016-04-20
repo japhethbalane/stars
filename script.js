@@ -23,7 +23,7 @@ function generateStars(count) {
 	for (var i = 0; i < count; i++) {
 		stars.push(new Star());
 	}
-	for (var i = 0; i < count/2; i++) {
+	for (var i = 0; i < count*2; i++) {
 		steadystars.push(new steadyStar());
 	}
 }
@@ -173,21 +173,37 @@ function Star() {
 function steadyStar() {
 	this.x = randomBetween(0, canvas.width);
 	this.y = randomBetween(0, horizon.y);
-	this.radius = 0.5;
+	this.radius = 0.8;
 	this.r = randomBetween(50,255);
 	this.g = randomBetween(50,255);
 	this.b = randomBetween(255,255);
+	this.blink = false;
+
+	this.generateY = function() {
+		for (var i = 0; i < horizon.y; i++) {
+			if (1 == randomBetween(1, 150)) {
+				this.y = i;
+				break;
+			}
+		}
+	}
+	// this.generateY();
 
 	this.drawCounterpart = function() {
-
+		var test = (horizon.y) - this.y + horizon.y;
+		if (test < canvas.height) {
+			context.beginPath();
+			context.arc(this.x, test, this.radius, Math.PI * 2, false);
+			context.fillStyle = "rgba("+this.r+","+this.g+","+this.b+",0.3)";
+			context.fill();
+		}
 	}
 
 	this.draw = function() {
 		this.drawCounterpart();
-
 		context.beginPath();
 		context.arc(this.x, this.y, this.radius, Math.PI * 2, false);
-		context.fillStyle = "rgba("+this.r+","+this.g+","+this.b+",1)";
+		context.fillStyle = "rgba("+this.r+","+this.g+","+this.b+",0.5)";
 		context.fill();
 	}
 }
@@ -200,7 +216,7 @@ function Horizon() {
 		context.beginPath();
 		context.moveTo(0,this.y);
 		context.lineTo(canvas.width,this.y);
-		context.strokeStyle = "rgba(255,255,255,0.09)";
+		context.strokeStyle = "rgba(255,255,255,0.0)";
 		context.stroke();
 	}
 }
