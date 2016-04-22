@@ -12,6 +12,7 @@ var stars = [];
 var steadystars = [];
 var starCount = 400;
 var horizon = new Horizon();
+var universeSpeed = 5;
 
 generateStars(starCount);
 
@@ -62,7 +63,7 @@ function Star() {
 
 	this.test = this.radius;
 	this.bool = false;
-	this.speed = randomBetween(5, 10) * 0.05;
+	this.speed = (randomBetween(1, 100) + universeSpeed) * 0.01;
 
 	this.r = randomBetween(50,255);
 	this.g = randomBetween(50,255);
@@ -111,8 +112,8 @@ function Star() {
 	}
 
 	this.update = function() {
-		this.x += this.speed;
-		this.y += this.speed / 4;
+		this.x -= this.speed;
+		this.y += this.speed / 5;
 
 		this.control();
 
