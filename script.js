@@ -10,11 +10,14 @@ canvas.height = window.innerHeight;
 
 var stars = [];
 var steadystars = [];
+var buildings = [];
 var starCount = 400;
+var buidingCount = 75;
 var horizon = new Horizon();
 var universeSpeed = 5;
 
 generateStars(starCount);
+generateBuildings(buidingCount);
 
 setInterval(universe, 20);
 
@@ -29,6 +32,12 @@ function generateStars(count) {
 	}
 }
 
+function generateBuildings(count) {
+	for (var i = 0; i < buidingCount; i++) {
+		buildings.push(new Building());
+	}
+}
+
 ////////////////////////////////////////////////////////////////
 
 function universe() {
@@ -38,6 +47,9 @@ function universe() {
 	}
 	for (var i = 0; i < stars.length; i++) {
 		stars[i].update().draw();
+	}
+	for (var i = 0; i < buildings.length; i++) {
+		buildings[i].update().draw();
 	}
 	horizon.draw();
 }
@@ -63,7 +75,7 @@ function Star() {
 
 	this.test = this.radius;
 	this.bool = false;
-	this.speed = (randomBetween(1, 100) + universeSpeed) * 0.01;
+	this.speed = (randomBetween(1, 20) + universeSpeed) * 0.01;
 
 	this.r = randomBetween(50,255);
 	this.g = randomBetween(50,255);
@@ -217,7 +229,46 @@ function Horizon() {
 		context.beginPath();
 		context.moveTo(0,this.y);
 		context.lineTo(canvas.width,this.y);
-		context.strokeStyle = "rgba(255,255,255,0.0)";
+		context.strokeStyle = "rgba(255,255,255,0.07)";
 		context.stroke();
+	}
+}
+
+function Building() {
+	this.x = randomBetween(0,canvas.width);
+	this.y = horizon.y;
+	this.height = randomBetween(40,100);
+	this.width = randomBetween(40,50);
+
+	this.update = function() {
+
+		return this;
+	}
+
+	this.drawWindows = function() {
+
+	}
+
+	this.drawCounterpart = function() {
+		context.beginPath();
+		context.moveTo(this.x,this.y);
+		context.lineTo(this.x,this.y+this.height);
+		context.lineTo(this.x+this.width,this.y+this.height);
+		context.lineTo(this.x+this.width,this.y);
+		context.fillStyle = "rgba(0,0,0,0.5)";
+		context.fill();
+	}
+
+	this.draw = function() {
+		this.drawWindows();
+		this.drawCounterpart();
+
+		context.beginPath();
+		context.moveTo(this.x,this.y);
+		context.lineTo(this.x,this.y-this.height);
+		context.lineTo(this.x+this.width,this.y-this.height);
+		context.lineTo(this.x+this.width,this.y);
+		context.fillStyle = "rgba(0,0,0,1)";
+		context.fill();
 	}
 }
