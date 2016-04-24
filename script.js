@@ -12,7 +12,7 @@ var stars = [];
 var steadystars = [];
 var buildings = [];
 var starCount = 400;
-var buidingCount = 75;
+var buidingCount = 25;
 var horizon = new Horizon();
 var universeSpeed = 5;
 
@@ -237,8 +237,8 @@ function Horizon() {
 function Building() {
 	this.x = randomBetween(0,canvas.width);
 	this.y = horizon.y;
-	this.height = randomBetween(40,100);
-	this.width = randomBetween(40,50);
+	this.height = randomBetween(10,50);
+	this.width = randomBetween(10,25);
 
 	this.update = function() {
 
@@ -257,6 +257,8 @@ function Building() {
 		context.lineTo(this.x+this.width,this.y);
 		context.fillStyle = "rgba(0,0,0,0.5)";
 		context.fill();
+		context.strokeStyle = "rgba(250,250,250,0.03)";
+		context.stroke();
 	}
 
 	this.draw = function() {
@@ -270,5 +272,7 @@ function Building() {
 		context.lineTo(this.x+this.width,this.y);
 		context.fillStyle = "rgba(0,0,0,1)";
 		context.fill();
+		context.strokeStyle = "rgba(250,250,250,0.1)";
+		context.stroke();
 	}
 }
