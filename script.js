@@ -16,7 +16,6 @@ var starCount = 400;
 var universeSpeed = 5;
 
 generateStars(starCount);
-
 setInterval(universe, 20);
 
 ////////////////////////////////////////////////////////////////
