@@ -223,13 +223,14 @@ function Horizon() {
 	}
 }
 
-function House(a) {
+function House(a, test) {
 	this.x = a;
-	this.width = randomBetween(10,50);
+	this.width = randomBetween(1,20);
 	this.height = randomBetween(10,150);
+	this.test = test;
 
 	this.update = function() {
-		this.height += randomBetween(-1,2);
+		// this.height += randomBetween(-1,2);
 	}
 
 	this.drawWindows = function() {
@@ -238,7 +239,8 @@ function House(a) {
 
 	this.drawCounterpart = function() {
 		context.beginPath();
-		context.moveTo(this.x, horizon.y+this.height);
+		context.moveTo(this.x, horizon.y+this.test)
+		context.lineTo(this.x, horizon.y+this.height);
 		context.lineTo(this.x+this.width, horizon.y+this.height);
 		context.strokeStyle = "rgba(255,255,255,0.1)";
 		context.stroke();
@@ -246,48 +248,27 @@ function House(a) {
 
 	this.draw = function() {
 		context.beginPath();
-		context.moveTo(this.x, horizon.y-this.height);
+		context.moveTo(this.x, horizon.y-this.test)
+		context.lineTo(this.x, horizon.y-this.height);
 		context.lineTo(this.x+this.width, horizon.y-this.height);
-		context.strokeStyle = "rgba(255,255,255,0.5)";
+		context.strokeStyle = "rgba(255,255,255,0.1)";
 		context.stroke();
 	}
 }
 
 function Buildings() {
 	this.houses = [];
+	var test = 0;
 
 	this.generateHouses = function() {
 		for (var i = 0; i < canvas.width; ) {
-			this.houses.push(new House(i));
+			if (this.houses[this.houses.length-1] != undefined)
+				test = this.houses[this.houses.length-1].height;
+			this.houses.push(new House(i,test));
 			i += this.houses[this.houses.length-1].width;
 		}
 	}
 	this.generateHouses();
-
-	this.connectHousesReflection = function() {
-		for (var i = 0; i < this.houses.length-1; i++) {
-			context.beginPath();
-			context.moveTo(this.houses[i].x+this.houses[i].width, 
-				horizon.y+this.houses[i].height);
-			context.lineTo(this.houses[i+1].x, 
-				horizon.y+this.houses[i+1].height);
-			context.strokeStyle = "rgba(255,255,255,0.1)";
-			context.stroke();
-		}
-	}
-
-	this.connectHouses = function() {
-		for (var i = 0; i < this.houses.length-1; i++) {
-			context.beginPath();
-			context.moveTo(this.houses[i].x+this.houses[i].width, 
-				horizon.y-this.houses[i].height);
-			context.lineTo(this.houses[i+1].x, 
-				horizon.y-this.houses[i+1].height);
-			context.strokeStyle = "rgba(255,255,255,0.5)";
-			context.stroke();
-		}
-		this.connectHousesReflection();
-	}
 
 	this.update = function() {
 
@@ -297,9 +278,8 @@ function Buildings() {
 	this.draw = function() {
 		for (var i = 0; i < this.houses.length; i++) {
 			// this.houses[i].update();
-			this.houses[i].drawCounterpart();
+			this.houses[i].drawCounterpart()
 			this.houses[i].draw();
 		}
-		this.connectHouses();
 	}
 }
