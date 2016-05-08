@@ -39,7 +39,7 @@ function universe() {
 	for (var i = 0; i < stars.length; i++) {
 		stars[i].update().draw();
 	}
-	buildings.update().draw();
+	// buildings.update().draw();
 	horizon.draw();
 }
 
@@ -140,7 +140,7 @@ function Star() {
 		this.checkAuraPosition();
 		context.beginPath();
 		context.arc(this.x, this.y, this.auraRadius, Math.PI * 2, false);
-		context.fillStyle = "rgba("+this.r+","+this.g+","+this.b+",0.007)";
+		context.fillStyle = "rgba("+this.r+","+this.g+","+this.b+",0.01)";
 		context.fill();
 	}
 
