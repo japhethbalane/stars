@@ -11,7 +11,6 @@ canvas.height = window.innerHeight;
 var stars = [];
 var steadystars = [];
 var horizon = new Horizon();
-var buildings = new Buildings();
 var starCount = 400;
 var universeSpeed = 5;
 
@@ -39,7 +38,6 @@ function universe() {
 	for (var i = 0; i < stars.length; i++) {
 		stars[i].update().draw();
 	}
-	// buildings.update().draw();
 	horizon.draw();
 }
 
@@ -60,11 +58,11 @@ function Star() {
 	this.x = randomBetween(0, canvas.width);
 	this.y = randomBetween(0, horizon.y)
 
-	this.radius = randomBetween(1, 3);
+	this.radius = randomBetween(1,3);
 
 	this.test = this.radius;
 	this.bool = false;
-	this.speed = (randomBetween(1, 20) + universeSpeed) * 0.01;
+	this.speed = (randomBetween(1, 10) + universeSpeed) * 0.01;
 
 	this.r = randomBetween(50,255);
 	this.g = randomBetween(50,255);
@@ -140,7 +138,7 @@ function Star() {
 		this.checkAuraPosition();
 		context.beginPath();
 		context.arc(this.x, this.y, this.auraRadius, Math.PI * 2, false);
-		context.fillStyle = "rgba("+this.r+","+this.g+","+this.b+",0.01)";
+		context.fillStyle = "rgba("+this.r+","+this.g+","+this.b+",0.007)";
 		context.fill();
 	}
 
@@ -183,13 +181,13 @@ function steadyStar() {
 
 	this.generateY = function() {
 		for (var i = 0; i < horizon.y; i++) {
-			if (1 == randomBetween(1, 150)) {
+			if (1 == randomBetween(1, 200)) {
 				this.y = i;
 				break;
 			}
 		}
 	}
-	// this.generateY();
+	this.generateY();
 
 	this.drawCounterpart = function() {
 		var test = (horizon.y) - this.y + horizon.y;
@@ -220,66 +218,5 @@ function Horizon() {
 		context.lineTo(canvas.width,this.y);
 		context.strokeStyle = "rgba(255,255,255,0.08)";
 		context.stroke();
-	}
-}
-
-function House(a, test) {
-	this.x = a;
-	this.width = randomBetween(1,20);
-	this.height = randomBetween(10,150);
-	this.test = test;
-
-	this.update = function() {
-		// this.height += randomBetween(-1,2);
-	}
-
-	this.drawWindows = function() {
-
-	}
-
-	this.drawCounterpart = function() {
-		context.beginPath();
-		context.moveTo(this.x, horizon.y+this.test)
-		context.lineTo(this.x, horizon.y+this.height);
-		context.lineTo(this.x+this.width, horizon.y+this.height);
-		context.strokeStyle = "rgba(255,255,255,0.1)";
-		context.stroke();
-	}
-
-	this.draw = function() {
-		context.beginPath();
-		context.moveTo(this.x, horizon.y-this.test)
-		context.lineTo(this.x, horizon.y-this.height);
-		context.lineTo(this.x+this.width, horizon.y-this.height);
-		context.strokeStyle = "rgba(255,255,255,0.1)";
-		context.stroke();
-	}
-}
-
-function Buildings() {
-	this.houses = [];
-	var test = 0;
-
-	this.generateHouses = function() {
-		for (var i = 0; i < canvas.width; ) {
-			if (this.houses[this.houses.length-1] != undefined)
-				test = this.houses[this.houses.length-1].height;
-			this.houses.push(new House(i,test));
-			i += this.houses[this.houses.length-1].width;
-		}
-	}
-	this.generateHouses();
-
-	this.update = function() {
-
-		return this;
-	}
-
-	this.draw = function() {
-		for (var i = 0; i < this.houses.length; i++) {
-			// this.houses[i].update();
-			this.houses[i].drawCounterpart()
-			this.houses[i].draw();
-		}
 	}
 }
