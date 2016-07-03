@@ -13,6 +13,8 @@ var steadystars = [];
 var horizon = new Horizon();
 var starCount = 400;
 var universeSpeed = 5;
+var mouseX = canvas.width/2, mouseY = canvas.height/2;
+var meteor = null;
 
 generateStars(starCount);
 setInterval(universe, 20);
@@ -28,17 +30,49 @@ function generateStars(count) {
 	}
 }
 
+var trackMouse = function(event) {
+    mouseX = event.pageX;
+    mouseY = event.pageY;
+}; canvas.addEventListener("mousemove", trackMouse);
+
+function rotate() {
+	var x = -(mouseX-canvas.width/2)/1000;
+	var y = -(mouseY-canvas.height/2)/1000;
+	for (var i = 0; i < stars.length; i++) {
+		stars[i].x += x;
+	}
+	for (var i = 0; i < steadystars.length; i++) {
+		steadystars[i].x += x/2;
+	}
+}
+
+function initMeteor() {
+	if (randomBetween(0,100) == 1 && meteor == null) {
+		meteor = new Meteor();
+	}
+	if (meteor != null) {
+		meteor.update().draw();
+		if (meteor.ended) {
+			meteor = null;
+		}
+	}
+}
+
 ////////////////////////////////////////////////////////////////
 
 function universe() {
 	clearCanvas();
+	// rotate();
+	initMeteor();
 	for (var i = 0; i < steadystars.length; i++) {
+		steadystars[i].control();
 		steadystars[i].draw();
 	}
 	for (var i = 0; i < stars.length; i++) {
 		stars[i].update().draw();
 	}
 	horizon.draw();
+	// console.log(meteor);
 }
 
 ////////////////////////////////////////////////////////////////
@@ -62,14 +96,14 @@ function Star() {
 
 	this.test = this.radius;
 	this.bool = false;
-	this.speed = (randomBetween(1, 10) + universeSpeed) * 0.01;
+	this.speed = (randomBetween(1, 10) * universeSpeed) * 0.001;
 
 	this.r = randomBetween(50,255);
 	this.g = randomBetween(50,255);
 	this.b = randomBetween(255,255);
 
 	this.radMlt = 50;
-	this.auraRadius = this.radMlt * this.radius;
+	this.auraRadius = 90;
 	this.originalAuraRadius = this.auraRadius;
 
 	this.control = function() {
@@ -138,7 +172,7 @@ function Star() {
 		this.checkAuraPosition();
 		context.beginPath();
 		context.arc(this.x, this.y, this.auraRadius, Math.PI * 2, false);
-		context.fillStyle = "rgba("+this.r+","+this.g+","+this.b+",0.007)";
+		context.fillStyle = "rgba("+this.r+","+this.g+","+this.b+",0.0078)";
 		context.fill();
 	}
 
@@ -189,6 +223,25 @@ function steadyStar() {
 	}
 	this.generateY();
 
+	this.control = function() {
+		if (this.x < 0) {
+			this.x = canvas.width;
+			this.auraRadius = this.radMlt * this.radius;
+		};
+		if (this.x > canvas.width) {
+			this.x = 0;
+			this.auraRadius = this.radMlt * this.radius;
+		}
+		if (this.y < 0) {
+			this.y = canvas.height - (canvas.height - horizon.y);
+			this.auraRadius = this.radMlt * this.radius;
+		}
+		if (this.y > canvas.height - (canvas.height - horizon.y)) {
+			this.y = 0;
+			this.auraRadius = this.radMlt * this.radius;
+		}
+	}
+
 	this.drawCounterpart = function() {
 		var test = (horizon.y) - this.y + horizon.y;
 		if (test < canvas.height) {
@@ -209,7 +262,7 @@ function steadyStar() {
 }
 
 function Horizon() {
-	this.div = 1.5;
+	this.div = 1.4;
 	this.y = canvas.height / this.div;
 
 	this.draw = function() {
@@ -218,5 +271,47 @@ function Horizon() {
 		context.lineTo(canvas.width,this.y);
 		context.strokeStyle = "rgba(255,255,255,0.08)";
 		context.stroke();
+	}
+}
+
+function Meteor() {
+	this.headx = randomBetween(0,canvas.width);
+	this.heady = 0;
+	this.tailx = this.headx;
+	this.taily = 0;
+	this.ended = false;
+
+	this.update = function() {
+		if (this.heady < horizon.y - 50 && !this.ended) {
+			this.headx -= universeSpeed * 15;
+			this.heady += universeSpeed * 15;
+		}
+		if (this.heady >= horizon.y - 50 && !this.ended) {
+			this.tailx -= universeSpeed * 15;
+			this.taily += universeSpeed * 15;
+		}
+		if (this.taily >= horizon.y - 50) {
+			this.ended = true;
+		}
+		return this;
+	}
+
+	this.draw = function() {
+		// context.shadowBlur = 10;
+		// context.shadowColor = "red";
+		context.beginPath();
+		context.strokeStyle = "rgba(255,255,255,0.5)";
+		context.moveTo(this.headx,this.heady);
+		context.lineTo(this.tailx,this.taily);
+		context.stroke();
+		context.beginPath();
+		context.strokeStyle = "rgba(255,255,255,0.2)";
+		context.moveTo(this.headx,horizon.y+(horizon.y-this.heady));
+		context.lineTo(this.tailx,horizon.y+(horizon.y-this.taily));
+		context.stroke();
+		context.beginPath();
+		context.fillStyle = "rgba(255,255,255,1)";
+		context.arc(this.headx,this.heady,1,Math.PI*2,false);
+		context.fill();
 	}
 }
