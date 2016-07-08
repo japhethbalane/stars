@@ -8,8 +8,10 @@ canvas.height = window.innerHeight;
 
 ////////////////////////////////////////////////////////////////
 
-var stars = [];
-var steadystars = [];
+var nearstars = [];
+var midstars = [];
+var farstars = [];
+var darkspots = [];
 var horizon = new Horizon();
 var starCount = 400;
 var universeSpeed = 5;
@@ -19,14 +21,22 @@ var meteor = null;
 generateStars(starCount);
 setInterval(universe, 20);
 
+// var gradient = context.createLinearGradient(0,0,0,canvas.height);
+
 ////////////////////////////////////////////////////////////////
 
 function generateStars(count) {
 	for (var i = 0; i < count; i++) {
-		stars.push(new Star());
+		nearstars.push(new nearStar());
 	}
 	for (var i = 0; i < count*2; i++) {
-		steadystars.push(new steadyStar());
+		midstars.push(new midStar());
+	}
+	for (var i = 0; i < count*3; i++) {
+		farstars.push(new farStar());
+	}
+	for (var i = 0; i < 50; i++) {
+		darkspots.push(new DarkSpot());
 	}
 }
 
@@ -35,7 +45,7 @@ var trackMouse = function(event) {
     mouseY = event.pageY;
 }; canvas.addEventListener("mousemove", trackMouse);
 
-function rotate() {
+function rotateMouse() {
 	var x = -(mouseX-canvas.width/2)/1000;
 	var y = -(mouseY-canvas.height/2)/1000;
 	for (var i = 0; i < stars.length; i++) {
@@ -47,7 +57,7 @@ function rotate() {
 }
 
 function initMeteor() {
-	if (randomBetween(0,100) == 1 && meteor == null) {
+	if (randomBetween(0,10) == 1 && meteor == null) {
 		meteor = new Meteor();
 	}
 	if (meteor != null) {
@@ -58,18 +68,27 @@ function initMeteor() {
 	}
 }
 
+function darkSpots() {
+	for (var i = 0; i < darkspots.length; i++) {
+		darkspots[i].update().draw();
+	}
+}
+
 ////////////////////////////////////////////////////////////////
 
 function universe() {
 	clearCanvas();
-	// rotate();
-	initMeteor();
-	for (var i = 0; i < steadystars.length; i++) {
-		steadystars[i].control();
-		steadystars[i].draw();
+	// rotateMouse();
+	// initMeteor();
+	for (var i = 0; i < farstars.length; i++) {
+		farstars[i].update().draw();
 	}
-	for (var i = 0; i < stars.length; i++) {
-		stars[i].update().draw();
+	for (var i = 0; i < midstars.length; i++) {
+		midstars[i].update().draw();
+	}
+	darkSpots();
+	for (var i = 0; i < nearstars.length; i++) {
+		nearstars[i].update().draw();
 	}
 	horizon.draw();
 	// console.log(meteor);
@@ -88,7 +107,7 @@ function clearCanvas() {
 
 ////////////////////////////////////////////////////////////////
 
-function Star() {
+function nearStar() {
 	this.x = randomBetween(0, canvas.width);
 	this.y = randomBetween(0, horizon.y)
 
@@ -96,14 +115,14 @@ function Star() {
 
 	this.test = this.radius;
 	this.bool = false;
-	this.speed = (randomBetween(1, 10) * universeSpeed) * 0.001;
+	this.speed = (randomBetween(1, 100) * universeSpeed) * 0.0001;
 
 	this.r = randomBetween(50,255);
 	this.g = randomBetween(50,255);
 	this.b = randomBetween(255,255);
 
 	this.radMlt = 50;
-	this.auraRadius = 90;
+	this.auraRadius = 75;
 	this.originalAuraRadius = this.auraRadius;
 
 	this.control = function() {
@@ -145,8 +164,9 @@ function Star() {
 	}
 
 	this.update = function() {
-		this.x -= this.speed;
-		this.y += this.speed / 5;
+		var test = (canvas.width/2-this.x)*0.00001;
+		this.x+=test;
+		this.y += test*2;
 
 		this.control();
 
@@ -172,7 +192,7 @@ function Star() {
 		this.checkAuraPosition();
 		context.beginPath();
 		context.arc(this.x, this.y, this.auraRadius, Math.PI * 2, false);
-		context.fillStyle = "rgba("+this.r+","+this.g+","+this.b+",0.0078)";
+		context.fillStyle = "rgba("+this.r+","+this.g+","+this.b+",0.004)";
 		context.fill();
 	}
 
@@ -181,13 +201,13 @@ function Star() {
 		if (test < canvas.height) {
 			context.beginPath();
 			context.arc(this.x, test, this.radius, Math.PI * 2, false);
-			context.fillStyle = "rgba("+this.r+","+this.g+","+this.b+",0.3)";
-			context.fill();
+			context.fillStyle = "rgba("+this.r+","+this.g+","+this.b+",0.5)";
+			context.fill(); // star
 
 			context.beginPath();
 			context.arc(this.x,test, this.auraRadius, Math.PI * 2, false);
-			context.fillStyle = "rgba("+this.r+","+this.g+","+this.b+",0.004)";
-			context.fill();
+			context.fillStyle = "rgba("+this.r+","+this.g+","+this.b+",0.005)";
+			context.fill(); // aura
 		}
 	}
 
@@ -204,10 +224,10 @@ function Star() {
 	}
 }
 
-function steadyStar() {
+function midStar() {
 	this.x = randomBetween(0, canvas.width);
 	this.y = randomBetween(0, horizon.y);
-	this.radius = 0.8;
+	this.radius = 0.7;
 	this.r = randomBetween(50,255);
 	this.g = randomBetween(50,255);
 	this.b = randomBetween(255,255);
@@ -215,7 +235,7 @@ function steadyStar() {
 
 	this.generateY = function() {
 		for (var i = 0; i < horizon.y; i++) {
-			if (1 == randomBetween(1, 200)) {
+			if (1 == randomBetween(1,300)) {
 				this.y = i;
 				break;
 			}
@@ -247,22 +267,90 @@ function steadyStar() {
 		if (test < canvas.height) {
 			context.beginPath();
 			context.arc(this.x, test, this.radius, Math.PI * 2, false);
-			context.fillStyle = "rgba("+this.r+","+this.g+","+this.b+",0.3)";
+			context.fillStyle = "rgba("+this.r+","+this.g+","+this.b+",0.7)";
 			context.fill();
 		}
+	}
+
+	this.update = function() {
+		this.control();
+
+		return this;
 	}
 
 	this.draw = function() {
 		this.drawCounterpart();
 		context.beginPath();
 		context.arc(this.x, this.y, this.radius, Math.PI * 2, false);
-		context.fillStyle = "rgba("+this.r+","+this.g+","+this.b+",0.5)";
+		context.fillStyle = "rgba("+this.r+","+this.g+","+this.b+",1)";
+		context.fill();
+	}
+}
+
+function farStar() {
+	this.x = randomBetween(0, canvas.width);
+	this.y = randomBetween(0, horizon.y);
+	this.radius = 0.45;
+	this.r = randomBetween(50,255);
+	this.g = randomBetween(50,255);
+	this.b = randomBetween(255,255);
+
+	this.generateY = function() {
+		for (var i = 0; i < horizon.y; i++) {
+			if (1 == randomBetween(1,150)) {
+				this.y = i;
+				break;
+			}
+		}
+	}
+	this.generateY();
+
+	this.control = function() {
+		if (this.x < 0) {
+			this.x = canvas.width;
+			this.auraRadius = this.radMlt * this.radius;
+		};
+		if (this.x > canvas.width) {
+			this.x = 0;
+			this.auraRadius = this.radMlt * this.radius;
+		}
+		if (this.y < 0) {
+			this.y = canvas.height - (canvas.height - horizon.y);
+			this.auraRadius = this.radMlt * this.radius;
+		}
+		if (this.y > canvas.height - (canvas.height - horizon.y)) {
+			this.y = 0;
+			this.auraRadius = this.radMlt * this.radius;
+		}
+	}
+
+	this.drawCounterpart = function() {
+		var test = (horizon.y) - this.y + horizon.y;
+		if (test < canvas.height) {
+			context.beginPath();
+			context.arc(this.x, test, this.radius, Math.PI * 2, false);
+			context.fillStyle = "rgba("+this.r+","+this.g+","+this.b+",0.7)";
+			context.fill();
+		}
+	}
+
+	this.update = function() {
+		this.control();
+
+		return this;
+	}
+
+	this.draw = function() {
+		this.drawCounterpart();
+		context.beginPath();
+		context.arc(this.x, this.y, this.radius, Math.PI * 2, false);
+		context.fillStyle = "rgba("+this.r+","+this.g+","+this.b+",1)";
 		context.fill();
 	}
 }
 
 function Horizon() {
-	this.div = 1.4;
+	this.div = 1.6;
 	this.y = canvas.height / this.div;
 
 	this.draw = function() {
@@ -275,11 +363,12 @@ function Horizon() {
 }
 
 function Meteor() {
-	this.headx = randomBetween(0,canvas.width);
+	this.headx = randomBetween(300,canvas.width);
 	this.heady = 0;
 	this.tailx = this.headx;
 	this.taily = 0;
 	this.ended = false;
+	this.color = gradient;
 
 	this.update = function() {
 		if (this.heady < horizon.y - 50 && !this.ended) {
@@ -299,19 +388,41 @@ function Meteor() {
 	this.draw = function() {
 		// context.shadowBlur = 10;
 		// context.shadowColor = "red";
+		context.strokeStyle = this.color;
+
 		context.beginPath();
 		context.strokeStyle = "rgba(255,255,255,0.5)";
 		context.moveTo(this.headx,this.heady);
 		context.lineTo(this.tailx,this.taily);
 		context.stroke();
+
 		context.beginPath();
 		context.strokeStyle = "rgba(255,255,255,0.2)";
 		context.moveTo(this.headx,horizon.y+(horizon.y-this.heady));
 		context.lineTo(this.tailx,horizon.y+(horizon.y-this.taily));
-		context.stroke();
+		context.stroke(); // reflection
+
 		context.beginPath();
 		context.fillStyle = "rgba(255,255,255,1)";
 		context.arc(this.headx,this.heady,1,Math.PI*2,false);
+		context.fill(); // head
+	}
+}
+
+function DarkSpot() {
+	this.x = randomBetween(0,canvas.width);
+	this.y = randomBetween(0,horizon.y);
+	this.radius = randomBetween(50,100);
+
+	this.update = function() {
+		return this;
+	}
+
+	this.draw = function() {
+		context.beginPath();
+		context.arc(this.x, this.y, this.radius, Math.PI * 2, false);
+		context.fillStyle = "rgba(0,0,0,0.5)";
 		context.fill();
+		// context.stroke();
 	}
 }
