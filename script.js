@@ -18,14 +18,12 @@ var universeSpeed = 5;
 var mouseX = canvas.width/2, mouseY = canvas.height/2;
 var meteor = null;
 
-generateStars(starCount);
+generateHeavenlyBodies(starCount);
 setInterval(universe, 20);
-
-// var gradient = context.createLinearGradient(0,0,0,canvas.height);
 
 ////////////////////////////////////////////////////////////////
 
-function generateStars(count) {
+function generateHeavenlyBodies(count) {
 	for (var i = 0; i < count; i++) {
 		nearstars.push(new nearStar());
 	}
@@ -46,13 +44,16 @@ var trackMouse = function(event) {
 }; canvas.addEventListener("mousemove", trackMouse);
 
 function rotateMouse() {
-	var x = -(mouseX-canvas.width/2)/1000;
-	var y = -(mouseY-canvas.height/2)/1000;
-	for (var i = 0; i < stars.length; i++) {
-		stars[i].x += x;
+	var x = -(mouseX-canvas.width/2)/1500;
+	var y = -(mouseY-canvas.height/2)/1500;
+	for (var i = 0; i < nearstars.length; i++) {
+		nearstars[i].x += x;
 	}
-	for (var i = 0; i < steadystars.length; i++) {
-		steadystars[i].x += x/2;
+	for (var i = 0; i < midstars.length; i++) {
+		midstars[i].x += x/1.5;
+	}
+	for (var i = 0; i < farstars.length; i++) {
+		farstars[i].x += x/2;
 	}
 }
 
@@ -78,8 +79,8 @@ function darkSpots() {
 
 function universe() {
 	clearCanvas();
-	// rotateMouse();
-	// initMeteor();
+	rotateMouse();
+	initMeteor();
 	for (var i = 0; i < farstars.length; i++) {
 		farstars[i].update().draw();
 	}
@@ -91,7 +92,6 @@ function universe() {
 		nearstars[i].update().draw();
 	}
 	horizon.draw();
-	// console.log(meteor);
 }
 
 ////////////////////////////////////////////////////////////////
@@ -363,49 +363,69 @@ function Horizon() {
 }
 
 function Meteor() {
+	this.color = "white";
+	this.ended = false;
+	this.speed = randomBetween(1,15);
+	//test1
 	this.headx = randomBetween(300,canvas.width);
 	this.heady = 0;
 	this.tailx = this.headx;
 	this.taily = 0;
-	this.ended = false;
-	this.color = gradient;
+	//test2
+	// this.radius = 5;
+	// this.angle = 180;
 
-	this.update = function() {
-		if (this.heady < horizon.y - 50 && !this.ended) {
-			this.headx -= universeSpeed * 15;
-			this.heady += universeSpeed * 15;
+	this.pathTest1 = function() {
+		if (this.heady < horizon.y-this.speed && !this.ended) {
+			this.headx -= this.speed;
+			this.heady += this.speed;
 		}
-		if (this.heady >= horizon.y - 50 && !this.ended) {
-			this.tailx -= universeSpeed * 15;
-			this.taily += universeSpeed * 15;
+		if (this.heady >= horizon.y - 300 && !this.ended) {
+			this.tailx -= this.speed;
+			this.taily += this.speed;
 		}
-		if (this.taily >= horizon.y - 50) {
+		if (this.taily >= horizon.y-this.speed) {
 			this.ended = true;
 		}
+	}
+
+	this.pathTest2 = function() {
+		this.angle--;
+		var dx = Math.cos(this.angle * Math.PI / 180) * this.speed;
+        var dy = Math.sin(this.angle * Math.PI / 180) * this.speed;
+        this.x += dx;
+        this.y += dy;
+        if (this.y >= horizon.y) {
+        	this.ended = true;
+        }
+	}
+
+	this.update = function() {
+		this.pathTest1();
+		// this.pathTest2();
 		return this;
 	}
 
 	this.draw = function() {
-		// context.shadowBlur = 10;
-		// context.shadowColor = "red";
 		context.strokeStyle = this.color;
+		context.fillStyle = this.color;
 
+		// // TEST1
 		context.beginPath();
 		context.strokeStyle = "rgba(255,255,255,0.5)";
 		context.moveTo(this.headx,this.heady);
 		context.lineTo(this.tailx,this.taily);
 		context.stroke();
-
 		context.beginPath();
-		context.strokeStyle = "rgba(255,255,255,0.2)";
+		context.strokeStyle = "rgba(255,255,255,0.1)";
 		context.moveTo(this.headx,horizon.y+(horizon.y-this.heady));
 		context.lineTo(this.tailx,horizon.y+(horizon.y-this.taily));
 		context.stroke(); // reflection
 
-		context.beginPath();
-		context.fillStyle = "rgba(255,255,255,1)";
-		context.arc(this.headx,this.heady,1,Math.PI*2,false);
-		context.fill(); // head
+		// TEST2
+		// context.beginPath();
+		// context.arc(this.x,this.y,this.radius,Math.PI*2,false);
+		// context.fill();
 	}
 }
 
