@@ -58,7 +58,7 @@ function rotateMouse() {
 }
 
 function initMeteor() {
-	if (randomBetween(0,10) == 1 && meteor == null) {
+	if (randomBetween(0,100) == 1 && meteor == null) {
 		meteor = new Meteor();
 	}
 	if (meteor != null) {
@@ -365,7 +365,7 @@ function Horizon() {
 function Meteor() {
 	this.color = "white";
 	this.ended = false;
-	this.speed = randomBetween(1,15);
+	this.speed = randomBetween(20,50);
 	//test1
 	this.headx = randomBetween(300,canvas.width);
 	this.heady = 0;
